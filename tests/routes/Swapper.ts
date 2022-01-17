@@ -32,7 +32,7 @@ describe('Swapper API', async () => {
     it('Shoud return a the data for the trade order', async () => {
       const request = chai.request(swapperAPI).post('/createSwapOrder').send({
         pair: 'USDT-ETH',
-        volume: '1000USDT',
+        volume: '1000',
       });
       const response = await request;
 
@@ -40,8 +40,8 @@ describe('Swapper API', async () => {
       expect(response.body).to.deep.equal({
         swapId: 1,
         pair: 'USDT-ETH',
-        volume: '1000USDT',
-        price: '150USDT/ETH',
+        volume: '1000',
+        price: '150',
         expiration: new Date().toISOString(),
       });
     });

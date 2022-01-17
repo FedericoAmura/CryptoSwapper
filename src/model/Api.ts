@@ -1,7 +1,9 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import express, { Express } from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
+import { validationResult } from 'express-validator';
 import helmet from 'helmet';
+import { StatusCodes } from 'http-status-codes';
 
 export default abstract class Api {
   public express: Express;
@@ -17,4 +19,13 @@ export default abstract class Api {
   }
 
   protected abstract routes(): void;
+
+  protected rejectErrors(req: Request, res: Response, next: NextFunction): void {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
+      throw new Error('Bad request');
+    }
+    next();
+  }
 }
