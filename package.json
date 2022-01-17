@@ -2,11 +2,11 @@
   "name": "belo2022cryptoswapper",
   "version": "0.0.1",
   "description": "A crypto coins swapper API based on Okex",
-  "main": "src/index.js",
+  "main": "src/api.js",
   "scripts": {
     "build": "tsc --project ./",
-    "serve": "NODE_ENV=development nodemon ./src/index.ts",
-    "test": "mocha -r ts-node/register 'tests/**/*.ts'"
+    "serve": "NODE_ENV=development nodemon ./src/api.ts",
+    "test": "NODE_ENV=test mocha --exit -r ts-node/register 'tests/**/*.ts'"
   },
   "repository": {
     "type": "git",

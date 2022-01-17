@@ -11,8 +11,8 @@ The files structure is as follows:
 - `src` directory contains the application code
   - `config` contains the configuration files. Their names must replicate the NODE_ENV environment variable used
   - `routes` contains the routers
+  - `api.ts` is the entry point of the app, it loads the routers
   - `config.ts` loads the configuration files accordingly
-  - `index.ts` is the entry point of the API app, it loads the routers
 - `tests` contains its tests which are run with [Mocha](https://mochajs.org/) and asserted with [Chai](https://www.chaijs.com/)
 
 ## Installation & running
