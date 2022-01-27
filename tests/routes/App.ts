@@ -8,9 +8,9 @@ const expect = chai.expect;
 
 import api from '../../src/routes/App';
 
-describe('Server API', async () => {
-  describe('/status', async () => {
-    it('Should return status response on call', async () => {
+describe('Server API', async function() {
+  describe('/status', async function() {
+    it('Should return status response on call', async function() {
       const request = chai.request(api).get('/status');
       const response = await request;
 

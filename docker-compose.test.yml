@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  api-test:
+    build:
+      context: ./
+      target: test
+    volumes:
+      - .:/src
+    depends_on:
+      - postgres-test
+    command: npm run test
+    environment:
+      NODE_ENV: test
+      DEBUG: nodejs-docker-express:*
+
+  postgres-test:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql

@@ -1,3 +1,20 @@
 {
-  "port": 8080
+  "env": "test",
+  "port": 8080,
+  "swapper": {
+    "offerTime": 30000
+  },
+  "okex": {
+    "url": "https://www.okex.com",
+    "simulatedTrading": "1",
+    "accessKey": "750a2c70-8e39-4fc4-aaa3-c9acdb1771d8",
+    "accessPassphrase": "unaPassPhrase",
+    "secretKey": "BCEB7ED09D26677E7734374D2F3B60A0"
+  },
+  "postgres": {
+    "user": "postgres",
+    "password": "postgres",
+    "port": 5432,
+    "host": "postgres-test"
+  }
 }

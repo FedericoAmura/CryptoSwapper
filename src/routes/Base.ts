@@ -5,7 +5,7 @@ import { validationResult } from 'express-validator';
 import helmet from 'helmet';
 import { StatusCodes } from 'http-status-codes';
 
-export default abstract class Api {
+export default abstract class Base {
   public express: Express;
 
   constructor() {

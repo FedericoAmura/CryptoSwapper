@@ -3,15 +3,17 @@ import chaiHttp from 'chai-http';
 import { StatusCodes } from 'http-status-codes';
 import 'mocha';
 import MockDate from 'mockdate'
+import sinon from 'sinon';
 
 chai.use(chaiHttp);
 const expect = chai.expect;
 
 import swapperAPI from '../../src/routes/Swapper';
+import OkexService from '../../src/services/Okex.service';
 
-describe('Swapper API', async () => {
-  describe('/status', async () => {
-    it('Should return status response on call', async () => {
+describe('Swapper API', async function() {
+  describe('/status', async function() {
+    it('Should return status response on call', async function() {
       const request = chai.request(swapperAPI).get('/status');
       const response = await request;
 
@@ -20,29 +22,44 @@ describe('Swapper API', async () => {
     });
   });
 
-  describe('/createSwapOrder', async () => {
+  describe('/createSwapOrder', async function() {
+    const NOW = new Date();
+    const THIRTY_SECONDS = 30 * 1000;
+
     beforeEach(() => {
-      MockDate.set(new Date());
+      MockDate.set(NOW);
     });
 
     afterEach(() => {
       MockDate.reset();
+      sinon.restore();
     });
 
-    it('Shoud return a the data for the trade order', async () => {
+    it('Shoud return a the data for the trade order', async function() {
+      sinon.stub(OkexService.prototype, 'getMarketBooks').callsFake(async () => {
+        return {
+          asks: [['36713.5', '15169', '0', '1']],
+          bids: [['36687', '17171', '0', '1']],
+          timestamp: NOW,
+        };
+      });
+
       const request = chai.request(swapperAPI).post('/createSwapOrder').send({
-        pair: 'USDT-ETH',
+        pair: 'BTC-USDT',
+        side: 'buy',
         volume: '1000',
       });
       const response = await request;
 
       expect(response.status).to.equal(StatusCodes.OK);
-      expect(response.body).to.deep.equal({
-        swapId: 1,
-        pair: 'USDT-ETH',
+      expect(response.body).to.have.own.property('id');
+      expect(response.body).to.deep.include({
+        pair: 'BTC-USDT',
+        side: 'buy',
         volume: '1000',
-        price: '150',
-        expiration: new Date().toISOString(),
+        price: '36713.50',
+        start: NOW.toISOString(),
+        expiration: new Date(NOW.getTime() + THIRTY_SECONDS).toISOString(),
       });
     });
   });
