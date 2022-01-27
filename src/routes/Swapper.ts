@@ -26,21 +26,27 @@ class Swapper extends Base {
   }
 
   private async createSwapOrder(req: Request, res: Response): Promise<void> {
-    const { pair, side, volume } = req.body;
+    try {
+      const { pair, side, volume } = req.body;
 
-    const swap = new Swap(pair, side, volume);
-    await swap.updatePriceOffer();
-    await swapRepository.saveSwap(swap);
+      const swap = new Swap(pair, side, volume);
+      await swap.updatePriceOffer();
+      await swapRepository.saveSwap(swap);
 
-    res.status(StatusCodes.OK).json({
-      id: swap.id,
-      pair: swap.pair,
-      side: swap.side,
-      volume: swap.volume,
-      price: swap.price,
-      start: swap.start,
-      expiration: swap.expiration,
-    });
+      res.status(StatusCodes.OK).json({
+        id: swap.id,
+        pair: swap.pair,
+        side: swap.side,
+        volume: swap.volume,
+        price: swap.price,
+        start: swap.start,
+        expiration: swap.expiration,
+      });
+    } catch (err: unknown) {
+      const status = StatusCodes.INTERNAL_SERVER_ERROR
+      const message = (err instanceof Error) ? err.message : String(err);
+      res.status(status).send({ status, message });
+    }
   }
 }
 

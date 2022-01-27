@@ -35,7 +35,7 @@ describe('Swapper API', async function() {
       sinon.restore();
     });
 
-    it('Shoud return a the data for the trade order', async function() {
+    it('Should return a the data for the trade order', async function() {
       sinon.stub(OkexService.prototype, 'getMarketBooks').callsFake(async () => {
         return {
           asks: [['36713.5', '15169', '0', '1']],
@@ -60,6 +60,29 @@ describe('Swapper API', async function() {
         price: '36713.50',
         start: NOW.toISOString(),
         expiration: new Date(NOW.getTime() + THIRTY_SECONDS).toISOString(),
+      });
+    });
+
+    it('Should return an error when there are not enough orders to fulfill the request', async function() {
+      sinon.stub(OkexService.prototype, 'getMarketBooks').callsFake(async () => {
+        return {
+          asks: [['36713.5', '15', '0', '1']],
+          bids: [['36687', '17', '0', '1']],
+          timestamp: NOW,
+        };
+      });
+
+      const request = chai.request(swapperAPI).post('/createSwapOrder').send({
+        pair: 'BTC-USDT',
+        side: 'buy',
+        volume: '1000',
+      });
+      const response = await request;
+
+      expect(response.status).to.equal(StatusCodes.INTERNAL_SERVER_ERROR);
+      expect(response.body).to.deep.include({
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: 'Not enough orders to fulfill the swap',
       });
     });
   });
