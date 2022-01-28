@@ -53,11 +53,12 @@ describe('Swapper API', async function() {
 
       expect(response.status).to.equal(StatusCodes.OK);
       expect(response.body).to.have.own.property('id');
+      expect(response.body).to.not.have.own.property('providerPrice');
       expect(response.body).to.deep.include({
         pair: 'BTC-USDT',
         side: 'buy',
         volume: '1000',
-        price: '36713.50',
+        price: '37447.77',
         start: NOW.toISOString(),
         expiration: new Date(NOW.getTime() + THIRTY_SECONDS).toISOString(),
       });

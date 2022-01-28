@@ -20,6 +20,18 @@ const config = convict({
       format: Number,
       default: 30 * 1000, // 30 seconds
     },
+    fees: {
+      buy: {
+        doc: 'The percentage fee Belo will add on every buying swap',
+        format: Number,
+        default: 2,
+      },
+      sell: {
+        doc: 'The percentage fee Belo will add on every buying swap',
+        format: Number,
+        default: 2,
+      },
+    },
   },
   okex: {
     url: {

@@ -11,11 +11,12 @@ export default class SwapRepository {
   }
 
   public async saveSwap(swap: Swap): Promise<Swap> {
-    const query = 'INSERT INTO swapper.swap (pair, side, volume, price, start, expiration) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+    const query = 'INSERT INTO swapper.swap (pair, side, volume, providerPrice, price, start, expiration) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
     const params = [
       swap.pair,
       swap.side,
       swap.volume,
+      swap.providerPrice,
       swap.price,
       swap.start,
       swap.expiration,

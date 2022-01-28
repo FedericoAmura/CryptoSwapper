@@ -2,7 +2,11 @@
   "env": "development",
   "port": 3000,
   "swapper": {
-    "offerTime": 30000
+    "offerTime": 30000,
+    "fees": {
+      "buy": 2,
+      "sell": 2
+    }
   },
   "okex": {
     "url": "https://www.okex.com",
@@ -15,6 +19,6 @@
     "user": "postgres",
     "password": "postgres",
     "port": 5432,
-    "host": "postgres"
+    "host": "localhost"
   }
 }

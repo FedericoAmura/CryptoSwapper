@@ -49,7 +49,8 @@ describe('Swap Model', async function() {
     expect(swap.side).to.equal('buy');
     expect(swap.volume).to.equal('1000');
     expect(swap.id).to.be.undefined;
-    expect(swap.price).to.equal('36713.50');
+    expect(swap.providerPrice).to.equal('36713.50');
+    expect(swap.price).to.equal('37447.77'); // providerPrice * fee
     expect(swap.start).to.eql(NOW);
     expect(swap.expiration).to.eql(new Date(NOW.getTime() + THIRTY_SECONDS));
   });
@@ -66,6 +67,7 @@ describe('Swap Model', async function() {
 
     await swap.updatePriceOffer();
 
-    expect(swap.price).to.equal('35200.00');
+    expect(swap.providerPrice).to.equal('35200.00');
+    expect(swap.price).to.equal('35904.00'); // providerPrice * fee
   });
 });

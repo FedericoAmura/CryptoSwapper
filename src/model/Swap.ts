@@ -12,6 +12,7 @@ export default class Swap {
   public pair: string;
   public side: Side;
   public volume: string;
+  public providerPrice?: string;
   public price?: string;
   public start?: Date;
   public expiration?: Date;
@@ -56,7 +57,10 @@ export default class Swap {
       throw new Error('Not enough orders to fulfill the swap');
     }
 
-    this.price = swapPrice.format({ symbol: '', separator: '', decimal: '.'});
+    const fee = config.get(`swapper.fees.${this.side}`);
+
+    this.providerPrice = swapPrice.format({ symbol: '', separator: '', decimal: '.'});
+    this.price = swapPrice.multiply(currency(fee).divide(100).add(1)).format({ symbol: '', separator: '', decimal: '.'});
     this.start = new Date();
     this.expiration = new Date(this.start.getTime() + config.get('swapper.offerTime'));
   }
