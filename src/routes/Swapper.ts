@@ -18,6 +18,11 @@ class Swapper extends Base {
       this.rejectErrors,
       this.createSwapOrder
     );
+    this.express.post('/confirmSwapOrder',
+      body('swapId').exists({ checkFalsy: true }).isInt({ gt: 0 }),
+      this.rejectErrors,
+      this.confirmSwapOrder,
+    );
   }
 
   // Routes
@@ -41,6 +46,29 @@ class Swapper extends Base {
         price: swap.price,
         start: swap.start,
         expiration: swap.expiration,
+      });
+    } catch (err: unknown) {
+      const status = StatusCodes.INTERNAL_SERVER_ERROR
+      const message = (err instanceof Error) ? err.message : String(err);
+      res.status(status).send({ status, message });
+    }
+  }
+
+  private async confirmSwapOrder(req: Request, res: Response): Promise<void> {
+    try {
+      const { swapId } = req.body;
+
+      const swap: Swap = await swapRepository.getById(swapId);
+      await swap.executeSwap();
+      await swapRepository.updateSwap(swap);
+
+      res.status(StatusCodes.OK).json({
+        id: swap.id,
+        pair: swap.pair,
+        side: swap.side,
+        volume: swap.volume,
+        price: swap.price,
+        execution: swap.execution,
       });
     } catch (err: unknown) {
       const status = StatusCodes.INTERNAL_SERVER_ERROR

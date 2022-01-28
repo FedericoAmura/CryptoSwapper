@@ -1,10 +1,9 @@
-import chai from 'chai';
+import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import 'mocha';
 
 chai.use(chaiHttp);
-const expect = chai.expect;
 
 import api from '../../src/routes/App';
 

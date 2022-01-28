@@ -7,7 +7,19 @@ export type Side = 'buy' | 'sell';
 
 const okex = new OkexService();
 
-export default class Swap {
+export interface SwapInterface {
+  id?: number;
+  pair: string;
+  side: Side;
+  volume: string;
+  providerPrice?: string;
+  price?: string;
+  start?: Date;
+  execution?: Date;
+  expiration?: Date;
+}
+
+export default class Swap implements SwapInterface {
   public id?: number;
   public pair: string;
   public side: Side;
@@ -15,6 +27,7 @@ export default class Swap {
   public providerPrice?: string;
   public price?: string;
   public start?: Date;
+  public execution?: Date;
   public expiration?: Date;
 
   private okexService: OkexService;
@@ -27,6 +40,18 @@ export default class Swap {
     this.okexService = okexService;
   }
 
+  public static fromData(data: SwapInterface): Swap {
+    const swap = new Swap(data.pair, data.side, data.volume);
+    swap.id = data.id;
+    swap.providerPrice = data.providerPrice;
+    swap.price = data.price;
+    swap.start = data.start;
+    swap.execution = data.execution;
+    swap.expiration = data.expiration;
+
+    return swap;
+  }
+
   private applySwapFee(providerPrice: currency): currency {
     const fee = config.get(`swapper.fees.${this.side}`);
 
@@ -36,6 +61,10 @@ export default class Swap {
   }
 
   public async updatePriceOffer(): Promise<void> {
+    if (this.start || this.execution || this.expiration) {
+      throw new Error('Swap has already been priced.');
+    }
+
     const orderbooks: OrderBooks = await this.okexService.getMarketBooks(this.pair);
 
     const orders = this.side === 'buy' ? orderbooks.asks : orderbooks.bids;
@@ -70,4 +99,19 @@ export default class Swap {
     this.start = new Date();
     this.expiration = new Date(this.start.getTime() + config.get('swapper.offerTime'));
   }
+
+  public async executeSwap(): Promise<void> {
+    const now = new Date();
+
+    if (!this.start || !this.expiration) {
+      throw new Error('Swap has never been priced. It cannot be executed.');
+    }
+    if (now > this.expiration) {
+      throw new Error('Swap has expired. It cannot be executed.');
+    }
+
+    // TODO execute the swap on Okex
+
+    this.execution = now;
+  };
 }
