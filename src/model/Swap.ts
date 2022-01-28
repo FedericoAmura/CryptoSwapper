@@ -27,6 +27,14 @@ export default class Swap {
     this.okexService = okexService;
   }
 
+  private applySwapFee(providerPrice: currency): currency {
+    const fee = config.get(`swapper.fees.${this.side}`);
+
+    const feeFactor = (this.side === 'buy' ? currency(100).add(fee) : currency(100).subtract(fee)).divide(100);
+
+    return providerPrice.multiply(feeFactor);
+  }
+
   public async updatePriceOffer(): Promise<void> {
     const orderbooks: OrderBooks = await this.okexService.getMarketBooks(this.pair);
 
@@ -57,10 +65,8 @@ export default class Swap {
       throw new Error('Not enough orders to fulfill the swap');
     }
 
-    const fee = config.get(`swapper.fees.${this.side}`);
-
     this.providerPrice = swapPrice.format({ symbol: '', separator: '', decimal: '.'});
-    this.price = swapPrice.multiply(currency(fee).divide(100).add(1)).format({ symbol: '', separator: '', decimal: '.'});
+    this.price = this.applySwapFee(swapPrice).format({ symbol: '', separator: '', decimal: '.'});
     this.start = new Date();
     this.expiration = new Date(this.start.getTime() + config.get('swapper.offerTime'));
   }

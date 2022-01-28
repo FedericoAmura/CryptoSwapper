@@ -12,11 +12,13 @@ describe('Swap Model', async function() {
   const NOW = new Date();
   const THIRTY_SECONDS = 30 * 1000;
 
-  let swap: Swap;
+  let buySwap: Swap;
+  let sellSwap: Swap;
 
   beforeEach(async function() {
     MockDate.set(NOW);
-    swap = new Swap('BTC-USDT', 'buy', '1000');
+    buySwap = new Swap('BTC-USDT', 'buy', '1000');
+    sellSwap = new Swap('BTC-USDT', 'sell', '1000');
   });
 
   afterEach(() => {
@@ -25,13 +27,13 @@ describe('Swap Model', async function() {
   });
 
   it('Should be created with pair, side and volume but not the rest', async function() {
-    expect(swap.pair).to.equal('BTC-USDT');
-    expect(swap.side).to.equal('buy');
-    expect(swap.volume).to.equal('1000');
-    expect(swap.id).to.be.undefined;
-    expect(swap.price).to.be.undefined;
-    expect(swap.start).to.be.undefined;
-    expect(swap.expiration).to.be.undefined;
+    expect(buySwap.pair).to.equal('BTC-USDT');
+    expect(buySwap.side).to.equal('buy');
+    expect(buySwap.volume).to.equal('1000');
+    expect(buySwap.id).to.be.undefined;
+    expect(buySwap.price).to.be.undefined;
+    expect(buySwap.start).to.be.undefined;
+    expect(buySwap.expiration).to.be.undefined;
   });
 
   it('Should ask Okex for a price and have valid timeframe after requesting it', async function() {
@@ -43,16 +45,27 @@ describe('Swap Model', async function() {
       };
     });
 
-    await swap.updatePriceOffer();
+    await buySwap.updatePriceOffer();
 
-    expect(swap.pair).to.equal('BTC-USDT');
-    expect(swap.side).to.equal('buy');
-    expect(swap.volume).to.equal('1000');
-    expect(swap.id).to.be.undefined;
-    expect(swap.providerPrice).to.equal('36713.50');
-    expect(swap.price).to.equal('37447.77'); // providerPrice * fee
-    expect(swap.start).to.eql(NOW);
-    expect(swap.expiration).to.eql(new Date(NOW.getTime() + THIRTY_SECONDS));
+    expect(buySwap.pair).to.equal('BTC-USDT');
+    expect(buySwap.side).to.equal('buy');
+    expect(buySwap.volume).to.equal('1000');
+    expect(buySwap.id).to.be.undefined;
+    expect(buySwap.providerPrice).to.equal('36713.50');
+    expect(buySwap.price).to.equal('37447.77'); // providerPrice but adding fee
+    expect(buySwap.start).to.eql(NOW);
+    expect(buySwap.expiration).to.eql(new Date(NOW.getTime() + THIRTY_SECONDS));
+
+    await sellSwap.updatePriceOffer();
+
+    expect(sellSwap.pair).to.equal('BTC-USDT');
+    expect(sellSwap.side).to.equal('sell');
+    expect(sellSwap.volume).to.equal('1000');
+    expect(sellSwap.id).to.be.undefined;
+    expect(sellSwap.providerPrice).to.equal('36687.00');
+    expect(sellSwap.price).to.equal('35953.26'); // providerPrice but discounting fee
+    expect(sellSwap.start).to.eql(NOW);
+    expect(sellSwap.expiration).to.eql(new Date(NOW.getTime() + THIRTY_SECONDS));
   });
 
   it('Should calculate the price properly based on the order book status', async function() {
@@ -65,9 +78,9 @@ describe('Swap Model', async function() {
       };
     });
 
-    await swap.updatePriceOffer();
+    await buySwap.updatePriceOffer();
 
-    expect(swap.providerPrice).to.equal('35200.00');
-    expect(swap.price).to.equal('35904.00'); // providerPrice * fee
+    expect(buySwap.providerPrice).to.equal('35200.00');
+    expect(buySwap.price).to.equal('35904.00'); // providerPrice * fee
   });
 });
