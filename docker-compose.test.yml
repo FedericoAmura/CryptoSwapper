@@ -4,6 +4,8 @@ services:
     build:
       context: ./
       target: test
+    volumes:
+      - ./coverage:/src/coverage
     depends_on:
       - postgres-test
     command: npm run test
