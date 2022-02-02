@@ -1,0 +1,344 @@
+{
+	"info": {
+		"_postman_id": "2b3649fc-5892-477a-a417-08832ddd2d03",
+		"name": "Belo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Okex",
+			"item": [
+				{
+					"name": "Account Balance",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const date = new Date();",
+									"const timestamp = date.toISOString();",
+									"",
+									"pm.request.headers.upsert({",
+									"    key: 'OK-ACCESS-TIMESTAMP',",
+									"    value: timestamp,",
+									"});",
+									"",
+									"const secretKey = 'BCEB7ED09D26677E7734374D2F3B60A0';",
+									"const signature = timestamp + pm.request.method + '/' + pm.request.url.path.join('/');",
+									"const hmac = CryptoJS.HmacSHA256(signature, secretKey);",
+									"const signed = CryptoJS.enc.Base64.stringify(hmac);",
+									"",
+									"pm.request.headers.upsert({",
+									"    key: 'OK-ACCESS-SIGN',",
+									"    value: signed,",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-simulated-trading",
+								"value": "1",
+								"type": "text"
+							},
+							{
+								"key": "OK-ACCESS-KEY",
+								"value": "750a2c70-8e39-4fc4-aaa3-c9acdb1771d8",
+								"type": "text"
+							},
+							{
+								"key": "OK-ACCESS-PASSPHRASE",
+								"value": "unaPassPhrase",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://www.okex.com/api/v5/account/balance",
+							"protocol": "https",
+							"host": [
+								"www",
+								"okex",
+								"com"
+							],
+							"path": [
+								"api",
+								"v5",
+								"account",
+								"balance"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Market Books",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const date = new Date();",
+									"const timestamp = date.toISOString();",
+									"const method = pm.request.method;",
+									"const path = pm.request.url.path.join('/');",
+									"const body = (pm.request.body || '').raw || '';",
+									"",
+									"pm.request.headers.upsert({",
+									"    key: 'OK-ACCESS-TIMESTAMP',",
+									"    value: timestamp,",
+									"});",
+									"",
+									"const secretKey = 'BCEB7ED09D26677E7734374D2F3B60A0';",
+									"const signature = timestamp + method + '/' + path + body;",
+									"console.log(signature);",
+									"const hmac = CryptoJS.HmacSHA256(signature, secretKey);",
+									"const signed = CryptoJS.enc.Base64.stringify(hmac);",
+									"",
+									"pm.request.headers.upsert({",
+									"    key: 'OK-ACCESS-SIGN',",
+									"    value: signed,",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-simulated-trading",
+								"type": "text",
+								"value": "1"
+							},
+							{
+								"key": "OK-ACCESS-KEY",
+								"type": "text",
+								"value": "750a2c70-8e39-4fc4-aaa3-c9acdb1771d8"
+							},
+							{
+								"key": "OK-ACCESS-PASSPHRASE",
+								"type": "text",
+								"value": "unaPassPhrase"
+							}
+						],
+						"url": {
+							"raw": "https://www.okx.com/api/v5/market/books?instId=BTC-USDT&sz=5",
+							"protocol": "https",
+							"host": [
+								"www",
+								"okx",
+								"com"
+							],
+							"path": [
+								"api",
+								"v5",
+								"market",
+								"books"
+							],
+							"query": [
+								{
+									"key": "instId",
+									"value": "BTC-USDT"
+								},
+								{
+									"key": "sz",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Place Order",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const date = new Date();",
+									"const timestamp = date.toISOString();",
+									"const method = pm.request.method;",
+									"const path = pm.request.url.path.join('/');",
+									"const body = (pm.request.body || '').raw || '';",
+									"",
+									"pm.request.headers.upsert({",
+									"    key: 'OK-ACCESS-TIMESTAMP',",
+									"    value: timestamp,",
+									"});",
+									"",
+									"const secretKey = 'BCEB7ED09D26677E7734374D2F3B60A0';",
+									"const signature = timestamp + method + '/' + path + body;",
+									"console.log(signature);",
+									"const hmac = CryptoJS.HmacSHA256(signature, secretKey);",
+									"const signed = CryptoJS.enc.Base64.stringify(hmac);",
+									"",
+									"pm.request.headers.upsert({",
+									"    key: 'OK-ACCESS-SIGN',",
+									"    value: signed,",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-simulated-trading",
+								"type": "text",
+								"value": "1"
+							},
+							{
+								"key": "OK-ACCESS-KEY",
+								"type": "text",
+								"value": "750a2c70-8e39-4fc4-aaa3-c9acdb1771d8"
+							},
+							{
+								"key": "OK-ACCESS-PASSPHRASE",
+								"type": "text",
+								"value": "unaPassPhrase"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"instId\": \"BTC-USDT\",\n    \"tdMode\": \"cash\",\n    \"side\": \"buy\",\n    \"clOrdId\": \"algunstringfalopa\",\n    \"ordType\": \"fok\",\n    \"px\": \"37741\",\n    \"sz\": \"0.01\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://www.okx.com/api/v5/trade/order",
+							"protocol": "https",
+							"host": [
+								"www",
+								"okx",
+								"com"
+							],
+							"path": [
+								"api",
+								"v5",
+								"trade",
+								"order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Swapper",
+			"item": [
+				{
+					"name": "API status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Swapper status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/swapper/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"swapper",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Swap Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pair\": \"BTC-USDT\",\n    \"side\": \"buy\",\n    \"volume\": \"0.01\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/swapper/createSwapOrder",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"swapper",
+								"createSwapOrder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm Swap Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"swapId\": 4\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/swapper/confirmSwapOrder",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"swapper",
+								"confirmSwapOrder"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

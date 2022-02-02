@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc --project ./",
     "serve": "NODE_ENV=development nodemon ./src/index.ts",
+    "serve:docker": "docker-compose -- up --renew-anon-volumes --force-recreate --build --exit-code-from api",
     "test": "NODE_ENV=test nyc mocha --exit -r ts-node/register --invert --fgrep Online 'tests/**/*.ts'",
     "test:docker": "docker-compose --file docker-compose.test.yml -- up --renew-anon-volumes --force-recreate --build --exit-code-from api-test",
     "test-all": "NODE_ENV=test mocha --exit -r ts-node/register 'tests/**/*.ts'"
