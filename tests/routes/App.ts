@@ -6,6 +6,9 @@ import 'mocha';
 chai.use(chaiHttp);
 
 import api from '../../src/routes/App';
+import config from '../../src/config';
+
+const ENV: string = config.get('env');
 
 describe('Server API', async function() {
   describe('/status', async function() {
@@ -16,7 +19,7 @@ describe('Server API', async function() {
       expect(response.status).to.equal(StatusCodes.OK);
       expect(response.body).to.deep.equal({
         status: ReasonPhrases.OK,
-        environment: 'test',
+        environment: ENV,
       });
     });
   });

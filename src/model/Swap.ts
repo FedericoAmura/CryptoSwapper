@@ -14,6 +14,7 @@ export interface SwapInterface {
   volume: string;
   providerPrice?: string;
   price?: string;
+  orderId?: string;
   start?: Date;
   execution?: Date;
   expiration?: Date;
@@ -26,6 +27,7 @@ export default class Swap implements SwapInterface {
   public volume: string;
   public providerPrice?: string;
   public price?: string;
+  public orderId?: string;
   public start?: Date;
   public execution?: Date;
   public expiration?: Date;
@@ -45,6 +47,7 @@ export default class Swap implements SwapInterface {
     swap.id = data.id;
     swap.providerPrice = data.providerPrice;
     swap.price = data.price;
+    swap.orderId = data.orderId;
     swap.start = data.start;
     swap.execution = data.execution;
     swap.expiration = data.expiration;
@@ -103,15 +106,14 @@ export default class Swap implements SwapInterface {
   public async executeSwap(): Promise<void> {
     const now = new Date();
 
-    if (!this.start || !this.expiration) {
+    if (!this.price || !this.start || !this.expiration) {
       throw new Error('Swap has never been priced. It cannot be executed.');
     }
     if (now > this.expiration) {
       throw new Error('Swap has expired. It cannot be executed.');
     }
 
-    // TODO execute the swap on Okex
-
+    this.orderId = await this.okexService.placeOrder(this.pair, this.side, this.volume, this.price, String(this.id));
     this.execution = now;
   };
 }

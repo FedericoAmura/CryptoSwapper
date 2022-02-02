@@ -48,7 +48,7 @@ class Swapper extends Base {
         expiration: swap.expiration,
       });
     } catch (err: unknown) {
-      const status = StatusCodes.INTERNAL_SERVER_ERROR
+      const status = StatusCodes.INTERNAL_SERVER_ERROR;
       const message = (err instanceof Error) ? err.message : String(err);
       res.status(status).send({ status, message });
     }
@@ -71,7 +71,7 @@ class Swapper extends Base {
         execution: swap.execution,
       });
     } catch (err: unknown) {
-      const status = StatusCodes.INTERNAL_SERVER_ERROR
+      const status = StatusCodes.INTERNAL_SERVER_ERROR;
       const message = (err instanceof Error) ? err.message : String(err);
       res.status(status).send({ status, message });
     }

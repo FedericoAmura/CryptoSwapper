@@ -10,6 +10,7 @@ CREATE TABLE swapper.swap
     volume         VARCHAR(255)                                       NOT NULL,
     provider_price VARCHAR(255)                                       NOT NULL,
     price          VARCHAR(255)                                       NOT NULL,
+    order_id        VARCHAR(255),
     start          TIMESTAMP WITH TIME ZONE                           NOT NULL,
     execution      TIMESTAMP WITH TIME ZONE,
     expiration     TIMESTAMP WITH TIME ZONE                           NOT NULL,

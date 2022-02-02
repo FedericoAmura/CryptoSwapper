@@ -27,6 +27,7 @@ describe('Swap Model', async function() {
     expect(swap.volume).to.equal('1000');
     expect(swap.id).to.be.undefined;
     expect(swap.price).to.be.undefined;
+    expect(swap.orderId).to.be.undefined;
     expect(swap.start).to.be.undefined;
     expect(swap.execution).to.be.undefined;
     expect(swap.expiration).to.be.undefined;
@@ -50,6 +51,7 @@ describe('Swap Model', async function() {
     expect(buySwap.id).to.be.undefined;
     expect(buySwap.providerPrice).to.equal('36713.50');
     expect(buySwap.price).to.equal('37447.77'); // providerPrice but adding fee
+    expect(buySwap.orderId).to.be.undefined;
     expect(buySwap.start).to.eql(NOW);
     expect(buySwap.expiration).to.eql(new Date(NOW.getTime() + THIRTY_SECONDS));
 
@@ -62,6 +64,7 @@ describe('Swap Model', async function() {
     expect(sellSwap.id).to.be.undefined;
     expect(sellSwap.providerPrice).to.equal('36687.00');
     expect(sellSwap.price).to.equal('35953.26'); // providerPrice but discounting fee
+    expect(sellSwap.orderId).to.be.undefined;
     expect(sellSwap.start).to.eql(NOW);
     expect(sellSwap.expiration).to.eql(new Date(NOW.getTime() + THIRTY_SECONDS));
   });
@@ -97,6 +100,14 @@ describe('Swap Model', async function() {
   });
 
   it('Should not execute if the swap is expired', async function() {
+    sinon.stub(OkexService.prototype, 'getMarketBooks').callsFake(async () => {
+      return {
+        asks: [['36713.5', '15169', '0', '1']],
+        bids: [['36687', '17171', '0', '1']],
+        timestamp: NOW,
+      };
+    });
+
     const swap: Swap = new Swap('BTC-USDT', 'buy', '1000');
     await swap.updatePriceOffer();
 
@@ -119,14 +130,19 @@ describe('Swap Model', async function() {
         timestamp: NOW,
       };
     });
+    sinon.stub(OkexService.prototype, 'placeOrder').callsFake(async () => {
+      return '312269865356374016';
+    });
 
     const swap: Swap = new Swap('BTC-USDT', 'buy', '1000');
     await swap.updatePriceOffer();
 
     expect(swap.execution).to.be.undefined;
+    expect(swap.orderId).to.be.undefined;
 
     await swap.executeSwap();
 
     expect(swap.execution).to.eql(NOW);
+    expect(swap.orderId).to.equal('312269865356374016');
   });
 });

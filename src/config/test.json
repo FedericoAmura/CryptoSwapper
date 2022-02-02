@@ -9,7 +9,7 @@
     }
   },
   "okex": {
-    "url": "https://www.okex.com",
+    "url": "https://www.okx.com",
     "simulatedTrading": "1",
     "accessKey": "750a2c70-8e39-4fc4-aaa3-c9acdb1771d8",
     "accessPassphrase": "unaPassPhrase",

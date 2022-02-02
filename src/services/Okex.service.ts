@@ -26,12 +26,12 @@ export default class OkexService {
     });
   }
 
-  private async makeRequest(method: Method, url: string, params: any) {
+  private async makeRequest(method: Method, url: string, params?: any, body?: any) {
     const now = new Date();
     const timestamp = now.toISOString();
 
     const secretKey = okexConfig.secretKey;
-    const signature = timestamp + method + url;
+    const signature = timestamp + method + url + (body ? JSON.stringify(body) : '');
     const hmac = CryptoJS.HmacSHA256(signature, secretKey);
     const signed = CryptoJS.enc.Base64.stringify(hmac);
 
@@ -43,6 +43,7 @@ export default class OkexService {
         'OK-ACCESS-SIGN': signed,
       },
       params,
+      data: body,
     });
   }
 
@@ -61,5 +62,30 @@ export default class OkexService {
     const { asks, bids, ts } = response.data.data[0];
 
     return { asks, bids, timestamp: new Date(Number(ts)) };
+  }
+
+  public async placeOrder(pair: string, side: string, amount: string, price: string, orderId?: string): Promise<string> {
+    const method: Method = 'POST';
+    const url = '/api/v5/trade/order';
+    const body = {
+      instId: pair,
+      tdMode: 'cash',
+      side,
+      clOrdId: orderId,
+      ordType: 'fok',
+      sz: amount,
+      px: price,
+    };
+
+    const response = await this.makeRequest(method, url, null, body);
+
+    const { ordId, sCode, sMsg } = response.data.data[0];
+
+    if (sMsg) {
+      console.error(`Okx error ${sCode}: ${sMsg}`);
+      throw new Error(sMsg);
+    }
+
+    return ordId;
   }
 }

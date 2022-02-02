@@ -2,7 +2,7 @@ import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import { StatusCodes } from 'http-status-codes';
 import 'mocha';
-import MockDate from 'mockdate'
+import MockDate from 'mockdate';
 import sinon from 'sinon';
 
 chai.use(chaiHttp);
@@ -89,6 +89,38 @@ describe('Swapper API', async function() {
   });
 
   describe('/confirmSwapOrder', async function() {
+    it('Should fail when no orderId is specified', async function() {
+      const request = chai.request(swapperAPI).post('/confirmSwapOrder').send({});
+      const response = await request;
+
+      expect(response.status).to.equal(StatusCodes.BAD_REQUEST);
+      expect(response.body).to.have.own.property('errors');
+
+      const errors = response.body.errors;
+      expect(errors).to.be.an('array');
+
+      const swapIdError = errors[0];
+      expect(swapIdError).to.deep.equal({
+        msg: 'Invalid value',
+        param: 'swapId',
+        location: 'body',
+      });
+    });
+
+
+    it('Should fail when swap is not found', async function() {
+      const swapId = 654231;
+
+      const request = chai.request(swapperAPI).post('/confirmSwapOrder').send({ swapId });
+      const response = await request;
+
+      expect(response.status).to.equal(StatusCodes.INTERNAL_SERVER_ERROR);
+      expect(response.body).to.deep.include({
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: `No swap found with id ${swapId}`,
+      });
+    });
+
     it('Should confirm a swap created previously', async function() {
       sinon.stub(OkexService.prototype, 'getMarketBooks').callsFake(async () => {
         return {
@@ -96,6 +128,9 @@ describe('Swapper API', async function() {
           bids: [['36687', '17171', '0', '1']],
           timestamp: NOW,
         };
+      });
+      sinon.stub(OkexService.prototype, 'placeOrder').callsFake(async () => {
+        return '312269865356374016';
       });
 
       const createSwapRequest = chai.request(swapperAPI).post('/createSwapOrder').send({
@@ -119,6 +154,38 @@ describe('Swapper API', async function() {
         volume: '1000',
         price: '35953.26',
         execution: NOW.toISOString(),
+      });
+    });
+
+    it('Should fail when cannot confirm swap in provider', async function() {
+      sinon.stub(OkexService.prototype, 'getMarketBooks').callsFake(async () => {
+        return {
+          asks: [['36713.5', '15169', '0', '1']],
+          bids: [['36687', '17171', '0', '1']],
+          timestamp: NOW,
+        };
+      });
+      sinon.stub(OkexService.prototype, 'placeOrder').callsFake(async () => {
+        throw new Error('Order placement failed due to insufficient balance');
+      });
+
+      const createSwapRequest = chai.request(swapperAPI).post('/createSwapOrder').send({
+        pair: 'BTC-USDT',
+        side: 'sell',
+        volume: '1000',
+      });
+      const createSwapResponse = await createSwapRequest;
+
+      const swapId: number = createSwapResponse.body.id;
+      const confirmSwapRequest = chai.request(swapperAPI).post('/confirmSwapOrder').send({
+        swapId,
+      });
+      const confirmSwapResponse = await confirmSwapRequest;
+
+      expect(confirmSwapResponse.status).to.equal(StatusCodes.INTERNAL_SERVER_ERROR);
+      expect(confirmSwapResponse.body).to.deep.include({
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: 'Order placement failed due to insufficient balance',
       });
     });
   });

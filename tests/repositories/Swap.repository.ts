@@ -16,6 +16,11 @@ describe('Swap Repository', async function() {
   const swapRepository: SwapRepository = new SwapRepository();
   let swap: Swap;
 
+  before(async function() {
+    await postgres.query('TRUNCATE swapper.swap');
+    await postgres.query('ALTER SEQUENCE swapper.swap_id_seq RESTART WITH 1');
+  });
+
   beforeEach(async function() {
     MockDate.set(NOW);
     dbSpy = sinon.spy(postgres, 'query');
@@ -25,6 +30,9 @@ describe('Swap Repository', async function() {
         bids: [['36687', '17171', '0', '1']],
         timestamp: NOW,
       };
+    });
+    sinon.stub(OkexService.prototype, 'placeOrder').callsFake(async () => {
+      return '312269865356374016';
     });
     swap = new Swap('BTC-USDT', 'buy', '1000');
     await swap.updatePriceOffer();
@@ -57,6 +65,7 @@ describe('Swap Repository', async function() {
       expect(savedSwap.volume).to.equal('1000');
       expect(savedSwap.providerPrice).to.equal('36713.50');
       expect(savedSwap.price).to.equal('37447.77');
+      expect(savedSwap.orderId).to.equal('312269865356374016');
       expect(savedSwap.start).to.eql(NOW);
       expect(savedSwap.execution).to.eql(NOW);
       expect(savedSwap.expiration).to.eql(new Date(NOW.getTime() + THIRTY_SECONDS));

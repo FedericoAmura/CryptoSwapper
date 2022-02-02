@@ -28,6 +28,7 @@ export default class SwapRepository {
       volume: dbData.volume,
       providerPrice: dbData.provider_price,
       price: dbData.price,
+      orderId: dbData.order_id,
       start: dbData.start,
       execution: dbData.execution,
       expiration: dbData.expiration,
@@ -37,13 +38,14 @@ export default class SwapRepository {
   }
 
   public async saveSwap(swap: Swap): Promise<Swap> {
-    const query = 'INSERT INTO swapper.swap (pair, side, volume, provider_price, price, start, execution, expiration) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
+    const query = 'INSERT INTO swapper.swap (pair, side, volume, provider_price, price, order_id, start, execution, expiration) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *';
     const params = [
       swap.pair,
       swap.side,
       swap.volume,
       swap.providerPrice,
       swap.price,
+      swap.orderId,
       swap.start,
       swap.execution,
       swap.expiration,
@@ -57,8 +59,9 @@ export default class SwapRepository {
   }
 
   public async updateSwap(swap: Swap): Promise<Swap> {
-    const query = 'UPDATE swapper.swap SET execution = $1 WHERE id = $2 RETURNING *';
+    const query = 'UPDATE swapper.swap SET order_id = $1, execution = $2 WHERE id = $3 RETURNING *';
     const params = [
+      swap.orderId,
       swap.execution,
       swap.id,
     ];
