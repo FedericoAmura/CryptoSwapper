@@ -22,12 +22,12 @@ const config = convict({
     },
     fees: {
       buy: {
-        doc: 'The percentage fee Belo will add on every buying swap',
+        doc: 'The percentage fee CryptoSwapper will add on every buying swap',
         format: Number,
         default: 2,
       },
       sell: {
-        doc: 'The percentage fee Belo will add on every buying swap',
+        doc: 'The percentage fee this CryptoSwapper will add on every buying swap',
         format: Number,
         default: 2,
       },

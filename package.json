@@ -1,7 +1,7 @@
 {
-  "name": "belo2022cryptoswapper",
+  "name": "cryptoswapper",
   "version": "0.0.1",
-  "description": "A crypto coins swapper API based on Okex",
+  "description": "A crypto coins swapper API to trade on Okex",
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc --project ./",
@@ -13,13 +13,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FedericoAmura/Belo2022CryptoSwapper.git"
+    "url": "git+https://github.com/FedericoAmura/CryptoSwapper.git"
   },
   "author": "Federico Amura",
   "bugs": {
-    "url": "https://github.com/FedericoAmura/Belo2022CryptoSwapper/issues"
+    "url": "https://github.com/FedericoAmura/CryptoSwapper/issues"
   },
-  "homepage": "https://github.com/FedericoAmura/Belo2022CryptoSwapper#readme",
+  "homepage": "https://github.com/FedericoAmura/CryptoSwapper#readme",
   "devDependencies": {
     "@types/chai": "^4.3.0",
     "@types/chai-http": "^4.2.0",

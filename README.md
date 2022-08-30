@@ -1,7 +1,6 @@
 # Crypto Swapper
 
 This repository is an API to request prices and perform trades on certain crypto pairs.
-The goal can be found on the [REQUIREMENTS.md](REQUIREMENTS.md) file.
 
 It is an [Express](https://expressjs.com/) server
 - written in [Typescript](https://www.typescriptlang.org/)
